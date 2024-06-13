@@ -53,8 +53,8 @@ class MemberControllerTest {
 
         // when
         mockMvc.perform(post("/api/members/signup")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(signupRequestDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(signupRequestDto)))
             .andExpect(status().isCreated());
     }
 }
