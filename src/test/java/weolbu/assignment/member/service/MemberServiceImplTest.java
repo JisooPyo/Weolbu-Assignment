@@ -9,8 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,7 +42,7 @@ class MemberServiceImplTest {
     }
 
     @Test
-    @DisplayName("이미 가입된 계정인 경우")
+    @DisplayName("회원가입 - 실패 : 이미 가입된 계정인 경우")
     void signupFailureByExistingAccount() {
         // given
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(new Member()));
@@ -53,7 +51,7 @@ class MemberServiceImplTest {
     }
 
     @Test
-    @DisplayName("회원가입 성공")
+    @DisplayName("회원가입 - 성공")
     void signupSuccess() {
         // given
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.empty());

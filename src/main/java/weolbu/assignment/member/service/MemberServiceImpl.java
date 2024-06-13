@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 이메일로 회원 정보를 불러옵니다.
-    private Member findMemberByEmail(String email) {
+    public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElse(null);
     }
 }

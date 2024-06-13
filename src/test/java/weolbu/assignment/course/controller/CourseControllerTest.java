@@ -1,4 +1,4 @@
-package weolbu.assignment.member.controller;
+package weolbu.assignment.course.controller;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -15,17 +15,16 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import weolbu.assignment.common.constants.MemberConstants;
+import weolbu.assignment.common.constants.CourseConstants;
 import weolbu.assignment.common.dto.ApiResponseDto;
-import weolbu.assignment.member.dto.SignupRequestDto;
-import weolbu.assignment.member.entity.MemberRoleEnum;
-import weolbu.assignment.member.service.MemberService;
+import weolbu.assignment.course.dto.CreateCourseRequestDto;
+import weolbu.assignment.course.service.CourseService;
 
-@WebMvcTest(value = MemberController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
-class MemberControllerTest {
+@WebMvcTest(value = CourseController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+class CourseControllerTest {
 
     @MockBean
-    MemberService memberService;
+    CourseService courseService;
 
     @Autowired
     MockMvc mockMvc;
@@ -35,26 +34,25 @@ class MemberControllerTest {
 
     @AfterEach
     void tearDown() {
-        reset(memberService);
+        reset(courseService);
     }
 
     @Test
-    void signup() throws Exception {
+    void createCourse() throws Exception {
         // given
-        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
-            .name("김학생")
-            .email("student1@email.com")
-            .mobileNumber("01012345678")
-            .password("password1")
-            .role(MemberRoleEnum.STUDENT)
+        CreateCourseRequestDto requestDto = CreateCourseRequestDto.builder()
+            .name("강의제목")
+            .email("teacher1@email.com")
+            .price(200_000)
+            .maxStudents(20)
             .build();
-        ApiResponseDto apiResponseDto = new ApiResponseDto(MemberConstants.SIGNUP_SUCCESS);
-        given(memberService.signup(signupRequestDto)).willReturn(apiResponseDto);
+        ApiResponseDto apiResponseDto = new ApiResponseDto(CourseConstants.CREATE_COURSE_SUCCESS);
+        given(courseService.createCourse(requestDto)).willReturn(apiResponseDto);
 
         // when
-        mockMvc.perform(post("/api/members/signup")
+        mockMvc.perform(post("/api/courses")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signupRequestDto)))
+                .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated());
     }
 }

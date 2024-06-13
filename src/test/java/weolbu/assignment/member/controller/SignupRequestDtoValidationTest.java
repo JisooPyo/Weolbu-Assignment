@@ -2,31 +2,23 @@ package weolbu.assignment.member.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import weolbu.assignment.common.constants.ValidConstants;
 import weolbu.assignment.member.dto.SignupRequestDto;
 import weolbu.assignment.member.entity.MemberRoleEnum;
+import weolbu.assignment.validation.ValidationCustomUtils;
 
 // SignupRequestDto 의 Validation 을 Test 합니다.
 public class SignupRequestDtoValidationTest {
-    private static Validator validator;
-    private static SignupRequestDto signupRequestDto;
+    private ValidationCustomUtils validationCustomUtils;
+    SignupRequestDto signupRequestDto;
 
     @BeforeEach
     void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-
+        validationCustomUtils = new ValidationCustomUtils();
         signupRequestDto = SignupRequestDto.builder()
             .name("김학생")
             .email("student1@email.com")
@@ -114,10 +106,6 @@ public class SignupRequestDtoValidationTest {
     }
 
     private String getValidationExMessage() {
-        Set<ConstraintViolation<SignupRequestDto>> validate = validator.validate(signupRequestDto);
-
-        Iterator<ConstraintViolation<SignupRequestDto>> iter = validate.iterator();
-        ConstraintViolation<SignupRequestDto> violation = iter.next();
-        return violation.getMessage();
+        return validationCustomUtils.getValidationExMessage(signupRequestDto);
     }
 }
