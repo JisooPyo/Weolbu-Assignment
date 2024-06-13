@@ -70,7 +70,7 @@ public class CourseServiceImpl implements CourseService {
 
             // 강의 최대 수강 인원을 넘겼을 때
             int count = memberCourseRepository.countByCourseId(courseId);
-            if (count == course.getMaxStudents()) {
+            if (course.getMaxStudents() != null && course.getMaxStudents() == count) {
                 CourseResponseDto failure = CourseResponseDto.builder()
                     .id(courseId)
                     .name(course.getName())
