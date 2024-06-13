@@ -10,7 +10,8 @@ public enum CustomErrorCode {
     MEMBER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, ErrorMsgConstants.MEMBER_ALREADY_EXISTS),
     INVALID_ACCESS(HttpStatus.BAD_REQUEST, ErrorMsgConstants.INVALID_ACCESS),
     STUDENT_CANNOT_CREATE_COURSE(HttpStatus.UNAUTHORIZED, ErrorMsgConstants.STUDENT_CANNOT_CREATE_COURSE),
-    COURSE_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, ErrorMsgConstants.COURSE_NAME_ALREADY_EXISTS);
+    COURSE_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, ErrorMsgConstants.COURSE_NAME_ALREADY_EXISTS),
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, ErrorMsgConstants.COURSE_NOT_FOUND);
 
     private final HttpStatus statusCode;
     private final String message;
