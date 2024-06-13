@@ -4,7 +4,10 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -13,10 +16,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import weolbu.assignment.common.constants.CourseConstants;
 import weolbu.assignment.common.dto.ApiResponseDto;
+import weolbu.assignment.course.dto.ApplyCourseRequestDto;
 import weolbu.assignment.course.dto.CreateCourseRequestDto;
 import weolbu.assignment.course.service.CourseService;
 
@@ -38,6 +43,7 @@ class CourseControllerTest {
     }
 
     @Test
+    @DisplayName("강의 개설 API")
     void createCourse() throws Exception {
         // given
         CreateCourseRequestDto requestDto = CreateCourseRequestDto.builder()
@@ -51,6 +57,25 @@ class CourseControllerTest {
 
         // when
         mockMvc.perform(post("/api/courses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("강의 신청 API")
+    void applyCourse() throws Exception {
+        // given
+        ApplyCourseRequestDto requestDto = ApplyCourseRequestDto.builder()
+            .email("student1@email.com")
+            .courses(List.of(1))
+            .build();
+
+        ApiResponseDto apiResponseDto = new ApiResponseDto(CourseConstants.APPLY_COURSE_SUCCESS);
+        given(courseService.applyCourse(requestDto)).willReturn(apiResponseDto);
+
+        // when
+        mockMvc.perform(post("/api/courses/application")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated());

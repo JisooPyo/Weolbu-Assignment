@@ -3,7 +3,11 @@ package weolbu.assignment.course.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +17,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import weolbu.assignment.common.constants.CourseConstants;
 import weolbu.assignment.common.dto.ApiResponseDto;
 import weolbu.assignment.common.exception.CustomException;
+import weolbu.assignment.course.dto.ApplyCourseRequestDto;
+import weolbu.assignment.course.dto.ApplyCourseResponseDto;
 import weolbu.assignment.course.dto.CreateCourseRequestDto;
 import weolbu.assignment.course.dto.CreateCourseResponseDto;
 import weolbu.assignment.course.entity.Course;
+import weolbu.assignment.course.entity.MemberCourse;
 import weolbu.assignment.course.repository.CourseRepository;
+import weolbu.assignment.course.repository.MemberCourseRepository;
 import weolbu.assignment.member.entity.Member;
 import weolbu.assignment.member.entity.MemberRoleEnum;
 import weolbu.assignment.member.service.MemberServiceImpl;
@@ -29,10 +38,13 @@ class CourseServiceImplTest {
     CourseRepository courseRepository;
     @Mock
     MemberServiceImpl memberService;
+    @Mock
+    MemberCourseRepository memberCourseRepository;
     @InjectMocks
     CourseServiceImpl courseService;
 
     CreateCourseRequestDto createCourseRequestDto;
+    ApplyCourseRequestDto applyCourseRequestDto;
 
     @BeforeEach
     void setUp() {
@@ -41,6 +53,10 @@ class CourseServiceImplTest {
             .email("teacher1@email.com")
             .price(200_000)
             .maxStudents(20)
+            .build();
+        applyCourseRequestDto = ApplyCourseRequestDto.builder()
+            .email("student1@email.com")
+            .courses(List.of(1))
             .build();
     }
 
@@ -104,5 +120,78 @@ class CourseServiceImplTest {
         assertEquals(course.getName(), responseDto.getName());
         assertEquals(course.getMaxStudents(), responseDto.getMaxStudents());
         assertEquals(course.getPrice(), responseDto.getPrice());
+    }
+
+    @Test
+    @DisplayName("강의 신청 - 실패 : courseId에 맞는 강의가 존재하지 않을 경우")
+    void applyCourseFailureByNotFoundCourse() {
+        // given
+        Member student = new Member();
+        given(memberService.findMemberByEmail(anyString())).willReturn(student);
+        given(courseRepository.findByIdForUpdate(anyInt())).willReturn(Optional.empty());
+
+        // when
+        assertThrows(CustomException.class, () -> courseService.applyCourse(applyCourseRequestDto));
+    }
+
+    @Test
+    @DisplayName("강의 신청 - 실패 : 이미 신청한 강의인 경우")
+    void applyCourseFailureByAlreadyApplied() {
+        // given
+        Member student = Member.builder().id(1).build();
+        given(memberService.findMemberByEmail(anyString())).willReturn(student);
+        Course course = Course.builder().id(1).name("강의1").build();
+        given(courseRepository.findByIdForUpdate(anyInt())).willReturn(Optional.of(course));
+        given(memberCourseRepository.findByCourseIdAndMemberId(anyInt(), anyInt()))
+            .willReturn(Optional.of(new MemberCourse()));
+
+        // when
+        ApiResponseDto apiResponseDto = courseService.applyCourse(applyCourseRequestDto);
+
+        // then
+        ApplyCourseResponseDto responseDto = (ApplyCourseResponseDto)apiResponseDto.getData();
+        assertEquals(1, responseDto.getFailure().size());
+        assertEquals(CourseConstants.ALREADY_APPLIED, responseDto.getFailure().get(0).getMessage());
+    }
+
+    @Test
+    @DisplayName("강의 신청 - 실패 : 신청한 강의가 최대 수강 인원에 도달한 경우")
+    void applyCourseFailureByCourseFull() {
+        // given
+        Member student = Member.builder().id(1).build();
+        given(memberService.findMemberByEmail(anyString())).willReturn(student);
+        Course course = Course.builder().id(1).name("강의1").maxStudents(10).build();
+        given(courseRepository.findByIdForUpdate(anyInt())).willReturn(Optional.of(course));
+        given(memberCourseRepository.findByCourseIdAndMemberId(anyInt(), anyInt()))
+            .willReturn(Optional.empty());
+        given(memberCourseRepository.countByCourseId(anyInt())).willReturn(10);
+
+        // when
+        ApiResponseDto apiResponseDto = courseService.applyCourse(applyCourseRequestDto);
+
+        // then
+        ApplyCourseResponseDto responseDto = (ApplyCourseResponseDto)apiResponseDto.getData();
+        assertEquals(1, responseDto.getFailure().size());
+        assertEquals(CourseConstants.COURSE_FULL, responseDto.getFailure().get(0).getMessage());
+    }
+
+    @Test
+    @DisplayName("강의 신청 - 성공")
+    void applyCourseSuccess() {
+        // given
+        Member student = Member.builder().id(1).build();
+        given(memberService.findMemberByEmail(anyString())).willReturn(student);
+        Course course = Course.builder().id(1).name("강의1").maxStudents(10).build();
+        given(courseRepository.findByIdForUpdate(anyInt())).willReturn(Optional.of(course));
+        given(memberCourseRepository.findByCourseIdAndMemberId(anyInt(), anyInt()))
+            .willReturn(Optional.empty());
+        given(memberCourseRepository.countByCourseId(anyInt())).willReturn(8);
+
+        // when
+        ApiResponseDto apiResponseDto = courseService.applyCourse(applyCourseRequestDto);
+
+        // then
+        ApplyCourseResponseDto responseDto = (ApplyCourseResponseDto)apiResponseDto.getData();
+        assertEquals(1, responseDto.getSuccess().size());
     }
 }
