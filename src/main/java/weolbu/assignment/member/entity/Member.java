@@ -2,6 +2,7 @@ package weolbu.assignment.member.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import weolbu.assignment.course.entity.Course;
+import weolbu.assignment.course.entity.MemberCourse;
 import weolbu.assignment.member.dto.SignupResponseDto;
 
 @Entity
@@ -47,6 +49,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Course> courses;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<MemberCourse> memberCourses;
 
     public SignupResponseDto toSignupResponseDto() {
         return SignupResponseDto.builder()

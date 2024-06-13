@@ -1,12 +1,16 @@
 package weolbu.assignment.course.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +30,7 @@ public class Course {
     @Setter
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
@@ -38,6 +42,9 @@ public class Course {
 
     @Column(nullable = false)
     private int price;
+
+    @OneToMany(mappedBy = "course")
+    private List<MemberCourse> memberCourses;
 
     public CreateCourseResponseDto toCreateCourseResponseDto() {
         return CreateCourseResponseDto.builder()
