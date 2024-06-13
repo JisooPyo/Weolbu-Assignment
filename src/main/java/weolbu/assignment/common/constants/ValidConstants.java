@@ -10,4 +10,6 @@ public class ValidConstants {
     public static final String INVALID_PASSWORD_SIZE = "비밀번호는 6자 이상 10자 이하로 이루어져야 합니다.";
     public static final String INVALID_PASSWORD = "비밀번호는 영소문자, 영대문자, 숫자 중 최소 두 가지 이상 조합이 필요합니다.";
     public static final String CANNOT_BE_BLANK = "빈 칸을 채워주세요.";
+    public static final String MAX_STUDENTS_NON_NEGATIVE = "최대 수강 인원은 0명 이상이어야 합니다.";
+    public static final String PRICE_NON_NEGATIVE = "가격은 0 이상이어야 합니다.";
 }
