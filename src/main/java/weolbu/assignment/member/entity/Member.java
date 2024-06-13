@@ -1,5 +1,7 @@
 package weolbu.assignment.member.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,11 +9,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import weolbu.assignment.course.entity.Course;
 import weolbu.assignment.member.dto.SignupResponseDto;
 
 @Entity
@@ -41,13 +45,16 @@ public class Member {
     @Column(nullable = false)
     private MemberRoleEnum role;
 
+    @OneToMany(mappedBy = "member")
+    private List<Course> courses;
+
     public SignupResponseDto toSignupResponseDto() {
         return SignupResponseDto.builder()
-            .id(this.id)
-            .name(this.name)
-            .email(this.email)
-            .mobileNumber(this.mobileNumber)
-            .role(this.role)
+            .id(id)
+            .name(name)
+            .email(email)
+            .mobileNumber(mobileNumber)
+            .role(role)
             .build();
     }
 }
