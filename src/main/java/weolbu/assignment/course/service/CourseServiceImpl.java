@@ -110,6 +110,14 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CoursesResponseDto getCourses(String sortBy, int page, int size) {
+        // 페이지 번호, 페이지 크기 validation
+        if (page < 0) {
+            throw new CustomException(CustomErrorCode.INVALID_PAGE);
+        }
+        if (size <= 0) {
+            throw new CustomException(CustomErrorCode.INVALID_SIZE);
+        }
+
         // 요청된 page 번호와 size 에 맞는 Pageable 객체를 생성합니다.
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> courses;
