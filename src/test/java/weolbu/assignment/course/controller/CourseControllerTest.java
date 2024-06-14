@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import weolbu.assignment.common.constants.CourseConstants;
 import weolbu.assignment.common.dto.ApiResponseDto;
 import weolbu.assignment.course.dto.ApplyCourseRequestDto;
+import weolbu.assignment.course.dto.CoursesResponseDto;
 import weolbu.assignment.course.dto.CreateCourseRequestDto;
 import weolbu.assignment.course.service.CourseService;
 
@@ -79,5 +80,20 @@ class CourseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("강의 목록 조회 API")
+    void getCourses() throws Exception {
+        // given
+        CoursesResponseDto coursesResponseDto = new CoursesResponseDto();
+        given(courseService.getCourses(anyString(), anyInt(), anyInt())).willReturn(coursesResponseDto);
+
+        // when
+        mockMvc.perform(get("/api/courses")
+                .param("sortBy", "recent")
+                .param("page", "1")
+                .param("size", "20"))
+            .andExpect(status().isOk());
     }
 }

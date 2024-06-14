@@ -2,13 +2,14 @@ package weolbu.assignment.course.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class CourseResponseDto {
-    private int id;
-    private String name;
-    private String message;
+    int id;
+    String name;
+    int price;
+    String instructor;
+    int applicants;
+    Integer maxStudents;
 }

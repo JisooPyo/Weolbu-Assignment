@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import weolbu.assignment.course.dto.CourseResponseDto;
 import weolbu.assignment.course.dto.CreateCourseResponseDto;
 import weolbu.assignment.member.entity.Member;
 
@@ -53,6 +54,17 @@ public class Course {
             .name(name)
             .maxStudents(maxStudents)
             .price(price)
+            .build();
+    }
+
+    public CourseResponseDto toCourseResponseDto(int applicants) {
+        return CourseResponseDto.builder()
+            .id(id)
+            .name(name)
+            .price(price)
+            .instructor(member.getName())
+            .applicants(applicants)
+            .maxStudents(maxStudents)
             .build();
     }
 }

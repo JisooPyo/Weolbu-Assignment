@@ -11,7 +11,11 @@ public enum CustomErrorCode {
     INVALID_ACCESS(HttpStatus.BAD_REQUEST, ErrorMsgConstants.INVALID_ACCESS),
     STUDENT_CANNOT_CREATE_COURSE(HttpStatus.UNAUTHORIZED, ErrorMsgConstants.STUDENT_CANNOT_CREATE_COURSE),
     COURSE_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, ErrorMsgConstants.COURSE_NAME_ALREADY_EXISTS),
-    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, ErrorMsgConstants.COURSE_NOT_FOUND);
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, ErrorMsgConstants.COURSE_NOT_FOUND),
+    INVALID_SORTBY(HttpStatus.BAD_REQUEST, ErrorMsgConstants.INVALID_SORTBY),
+    NO_MORE_DATA(HttpStatus.BAD_REQUEST, ErrorMsgConstants.NO_MORE_DATA),
+    INVALID_PAGE(HttpStatus.BAD_REQUEST, ErrorMsgConstants.INVALID_PAGE),
+    INVALID_SIZE(HttpStatus.BAD_REQUEST, ErrorMsgConstants.INVALID_SIZE);
 
     private final HttpStatus statusCode;
     private final String message;
