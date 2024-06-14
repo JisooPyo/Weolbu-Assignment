@@ -8,9 +8,17 @@
 
 ## 📑 요청 사항
 
-1. 회원 가입 API - [관련 이슈](https://github.com/JisooPyo/Weolbu-Assignment/issues/3)
-2. 강의 개설 API - [관련 이슈](https://github.com/JisooPyo/Weolbu-Assignment/issues/4)
-3. 강의 신청 API - [관련 이슈 1](https://github.com/JisooPyo/Weolbu-Assignment/issues/5), [관련 이슈 2](https://github.com/JisooPyo/Weolbu-Assignment/issues/6)
+1. 회원 가입 API - [회원 가입 API PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/14)
+2. 강의 개설 API - [강의 개설 API PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/15)
+3. 강의 신청 API - [강의 목록 조회 API PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/18), [수강 신청 API PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/17)
+
+<br>
+
+## ☑ 추가 구현
+
+1. Swagger 적용 - [Swagger PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/23)
+2. Github Actions CI script 작성 - [CI PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/2)
+3. 신청한 강의 목록 조회 API 구현 - [신청한 강의 목록 조회 API PR](https://github.com/JisooPyo/Weolbu-Assignment/pull/25)
 
 <br>
 
@@ -19,12 +27,14 @@
 <img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=OpenJDK&logoColor=white">&nbsp;
 <img src="https://img.shields.io/badge/Spring-6DB33F?style=flat-square&logo=spring&logoColor=white">&nbsp;
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Querydsl-0289CB?style=flat-square&logo=&logoColor=white">&nbsp;
 <img src="https://img.shields.io/badge/H2-1021FF?style=flat-square&logo=&logoColor=white">&nbsp;
 <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=gradle&logoColor=white">&nbsp;
 <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white">&nbsp;
 
 <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white">&nbsp;
 <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=postman&logoColor=white">&nbsp;
+<img src="https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=white">&nbsp;
 
 <br>
 
