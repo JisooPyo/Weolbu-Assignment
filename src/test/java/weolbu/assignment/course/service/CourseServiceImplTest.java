@@ -3,11 +3,10 @@ package weolbu.assignment.course.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,12 +15,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import weolbu.assignment.common.constants.CourseConstants;
 import weolbu.assignment.common.dto.ApiResponseDto;
 import weolbu.assignment.common.exception.CustomException;
 import weolbu.assignment.course.dto.ApplyCourseRequestDto;
 import weolbu.assignment.course.dto.ApplyCourseResponseDto;
+import weolbu.assignment.course.dto.CoursesResponseDto;
 import weolbu.assignment.course.dto.CreateCourseRequestDto;
 import weolbu.assignment.course.dto.CreateCourseResponseDto;
 import weolbu.assignment.course.entity.Course;
@@ -193,5 +197,68 @@ class CourseServiceImplTest {
         // then
         ApplyCourseResponseDto responseDto = (ApplyCourseResponseDto)apiResponseDto.getData();
         assertEquals(1, responseDto.getSuccess().size());
+    }
+
+    @Test
+    @DisplayName("강의 목록 조회 - 실패 : 잘못된 페이지 번호")
+    void getCoursesFailureByInvalidPage() {
+        // when
+        assertThrows(CustomException.class, () -> courseService.getCourses("recent", -1, 20));
+    }
+
+    @Test
+    @DisplayName("강의 목록 조회 - 실패 : 잘못된 페이지 크기")
+    void getCoursesFailureByInvalidSize() {
+        // when
+        assertThrows(CustomException.class, () -> courseService.getCourses("recent", 0, 0));
+    }
+
+    @Test
+    @DisplayName("강의 목록 조회 - 실패 : 잘못된 정렬 기준")
+    void getCoursesFailureByInvalidSortBy() {
+        // when
+        assertThrows(CustomException.class, () -> courseService.getCourses("wrongSort", 1, 20));
+    }
+
+    @Test
+    @DisplayName("강의 목록 조회 - 실패 : 데이터가 없는 경우")
+    void getCoursesFailureByNoData() {
+        // given
+        given(courseRepository.findAllByOrderByCreatedAtDesc(any())).willReturn(Page.empty());
+
+        // when
+        assertThrows(CustomException.class, () -> courseService.getCourses("recent", 1, 20));
+    }
+
+    @Test
+    @DisplayName("강의 목록 조회 - 성공")
+    void getCoursesSuccess() {
+        // given
+        int pageNumber = 0;
+        int pageSize = 20;
+        List<Course> courses = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            courses.add(Course.builder()
+                .id(i)
+                .name("강의" + i)
+                .member(Member.builder().name("강사").build())
+                .maxStudents(10).build()
+            );
+        }
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Course> coursePage = new PageImpl<>(courses, pageable, courses.size());
+
+        given(courseRepository.findAllByOrderByCreatedAtDesc(any())).willReturn(coursePage);
+        given(memberCourseRepository.countByCourseId(anyInt())).willReturn(0);
+
+        // when
+        CoursesResponseDto responseDto = courseService.getCourses("recent", pageNumber, pageSize);
+
+        // then
+        assertEquals(courses.size(), responseDto.getCourseResponseDtos().size());
+        assertEquals(pageSize, responseDto.getSize());
+        assertEquals(courses.size(), responseDto.getTotalElements());
+        verify(courseRepository, times(1)).findAllByOrderByCreatedAtDesc(any());
+        verify(memberCourseRepository, times(courses.size())).countByCourseId(anyInt());
     }
 }
