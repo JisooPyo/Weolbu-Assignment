@@ -196,7 +196,7 @@ class CourseServiceImplTest {
 
         // then
         ApplyCourseResponseDto responseDto = (ApplyCourseResponseDto)apiResponseDto.getData();
-        assertEquals(1, responseDto.getSuccess().size());
+        assertEquals(applyCourseRequestDto.getCourses().size(), responseDto.getSuccess().size());
     }
 
     @Test
