@@ -96,4 +96,20 @@ class CourseControllerTest {
                 .param("size", "20"))
             .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("신청한 강의 목록 조회 API")
+    void getAppliedCourses() throws Exception {
+        // given
+        CoursesResponseDto coursesResponseDto = new CoursesResponseDto();
+        given(courseService.getAppliedCourses(anyString(), anyInt(), anyInt())).willReturn(coursesResponseDto);
+
+        // when
+        mockMvc.perform(get("/api/courses/applications")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"test@example.com\"}")
+                .param("page", "1")
+                .param("size", "20"))
+            .andExpect(status().isOk());
+    }
 }
