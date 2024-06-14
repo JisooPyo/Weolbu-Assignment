@@ -1,5 +1,6 @@
 package weolbu.assignment.member.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +18,13 @@ import weolbu.assignment.member.repository.MemberRepository;
 @Transactional
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ApiResponseDto signup(SignupRequestDto requestDto) {
         checkEmailRegistered(requestDto.getEmail());
-        Member member = requestDto.toMember();
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+        Member member = requestDto.toMember(encodedPassword);
         Member savedMember = memberRepository.save(member);
         return new ApiResponseDto(MemberConstants.SIGNUP_SUCCESS, savedMember.toSignupResponseDto());
     }

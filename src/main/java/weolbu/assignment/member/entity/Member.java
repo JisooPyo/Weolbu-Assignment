@@ -40,7 +40,7 @@ public class Member {
     @Column(nullable = false, length = 20)
     private String mobileNumber;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(value = EnumType.STRING)

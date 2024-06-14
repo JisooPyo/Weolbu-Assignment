@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import weolbu.assignment.common.dto.ApiResponseDto;
 import weolbu.assignment.common.exception.CustomException;
@@ -26,6 +27,8 @@ class MemberServiceImplTest {
 
     @Mock
     MemberRepository memberRepository;
+    @Mock
+    PasswordEncoder passwordEncoder;
     @InjectMocks
     MemberServiceImpl memberService;
     SignupRequestDto signupRequestDto;
@@ -55,7 +58,9 @@ class MemberServiceImplTest {
     void signupSuccess() {
         // given
         given(memberRepository.findByEmail(anyString())).willReturn(Optional.empty());
-        Member member = signupRequestDto.toMember();
+        String encodedPassword = "encodedPassword";
+        given(passwordEncoder.encode(anyString())).willReturn(encodedPassword);
+        Member member = signupRequestDto.toMember(encodedPassword);
         member.setId(1);
         given(memberRepository.save(any(Member.class))).willReturn(member);
 
