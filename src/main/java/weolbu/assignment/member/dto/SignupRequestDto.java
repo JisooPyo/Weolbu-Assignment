@@ -44,12 +44,12 @@ public class SignupRequestDto {
     @NotNull(message = ValidConstants.CANNOT_BE_BLANK)
     private MemberRoleEnum role;
 
-    public Member toMember() {
+    public Member toMember(String encodedPassword) {
         return Member.builder()
             .name(this.name)
             .email(this.email)
             .mobileNumber(this.mobileNumber)
-            .password(this.password)
+            .password(encodedPassword)
             .role(this.role)
             .build();
     }
