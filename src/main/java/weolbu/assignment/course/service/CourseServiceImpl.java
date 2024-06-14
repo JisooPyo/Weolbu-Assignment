@@ -116,16 +116,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CoursesResponseDto getCourses(String sortBy, int page, int size) {
-        // 페이지 번호, 페이지 크기 validation
-        if (page < 0) {
-            throw new CustomException(CustomErrorCode.INVALID_PAGE);
-        }
-        if (size <= 0) {
-            throw new CustomException(CustomErrorCode.INVALID_SIZE);
-        }
-
         // 요청된 page 번호와 size 에 맞는 Pageable 객체를 생성합니다.
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = createPageable(page, size);
         Page<Course> courses;
         switch (sortBy) {
             case "recent":
@@ -163,6 +155,49 @@ public class CourseServiceImpl implements CourseService {
             .size(courses.getSize())
             .courseResponseDtos(courseResponseDtos)
             .build();
+    }
+
+    @Override
+    public CoursesResponseDto getAppliedCourses(String email, int page, int size) {
+        // 요청된 page 번호와 size 에 맞는 Pageable 객체를 생성합니다.
+        Pageable pageable = createPageable(page, size);
+
+        Member member = findMemberByEmail(email);
+        Page<MemberCourse> courses = memberCourseRepository.findAllByMemberIdOrderByIdDesc(member.getId(), pageable);
+
+        // 데이터가 없는 경우
+        if (courses.isEmpty()) {
+            throw new CustomException(CustomErrorCode.NO_MORE_DATA);
+        }
+
+        // MemberCourse -> CourseResponseDto 로 변경합니다.
+        List<CourseResponseDto> courseResponseDtos = courses.get()
+            .map(
+                memberCourse -> {
+                    int applicants = memberCourseRepository.countByCourseId(memberCourse.getCourse().getId());
+                    return memberCourse.getCourse().toCourseResponseDto(applicants);
+                }
+            )
+            .toList();
+
+        // 페이징 정보, 강의 정보를 반환합니다.
+        return CoursesResponseDto.builder()
+            .totalElements(courses.getTotalElements())
+            .totalPages(courses.getTotalPages())
+            .size(courses.getSize())
+            .courseResponseDtos(courseResponseDtos)
+            .build();
+    }
+
+    private Pageable createPageable(int page, int size) {
+        // 페이지 번호, 페이지 크기 validation
+        if (page < 0) {
+            throw new CustomException(CustomErrorCode.INVALID_PAGE);
+        }
+        if (size <= 0) {
+            throw new CustomException(CustomErrorCode.INVALID_SIZE);
+        }
+        return PageRequest.of(page, size);
     }
 
     // 강의 신청 성공 정보와 강의 신청 실패 정보를 병합하여 반환합니다.

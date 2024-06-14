@@ -76,7 +76,7 @@ class CourseControllerTest {
         given(courseService.applyCourse(requestDto)).willReturn(apiResponseDto);
 
         // when
-        mockMvc.perform(post("/api/courses/application")
+        mockMvc.perform(post("/api/courses/applications")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated());
@@ -92,6 +92,22 @@ class CourseControllerTest {
         // when
         mockMvc.perform(get("/api/courses")
                 .param("sortBy", "recent")
+                .param("page", "1")
+                .param("size", "20"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("신청한 강의 목록 조회 API")
+    void getAppliedCourses() throws Exception {
+        // given
+        CoursesResponseDto coursesResponseDto = new CoursesResponseDto();
+        given(courseService.getAppliedCourses(anyString(), anyInt(), anyInt())).willReturn(coursesResponseDto);
+
+        // when
+        mockMvc.perform(get("/api/courses/applications")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"test@example.com\"}")
                 .param("page", "1")
                 .param("size", "20"))
             .andExpect(status().isOk());
