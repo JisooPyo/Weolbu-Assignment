@@ -31,4 +31,14 @@ public interface CourseService {
      * @return 페이징 정보와 강의 데이터 목록
      */
     CoursesResponseDto getCourses(String sortBy, int page, int size);
+
+    /**
+     * 페이징에 필요한 정보를 받아 내가 신청한 강의 목록을 정렬하여 반환합니다.
+     *
+     * @param email 인증정보
+     * @param page 조회할 페이지 번호
+     * @param size 페이지당 데이터 수
+     * @return 페이징 정보와 강의 데이터 목록
+     */
+    CoursesResponseDto getAppliedCourses(String email, int page, int size);
 }

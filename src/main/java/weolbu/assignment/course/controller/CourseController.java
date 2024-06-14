@@ -1,5 +1,7 @@
 package weolbu.assignment.course.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +35,7 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/application")
+    @PostMapping("/applications")
     @Operation(summary = "강의 신청 API")
     public ResponseEntity<ApiResponseDto> applyCourse(@Valid @RequestBody ApplyCourseRequestDto requestDto) {
         ApiResponseDto response = courseService.applyCourse(requestDto);
@@ -47,5 +49,16 @@ public class CourseController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok().body(courseService.getCourses(sortBy, page - 1, size));
+    }
+
+    @GetMapping("/applications")
+    @Operation(summary = "신청한 강의 목록 조회 API")
+    public ResponseEntity<CoursesResponseDto> getAppliedCourses(
+        @RequestBody Map<String, String> emailMap,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok().body(
+            courseService.getAppliedCourses(emailMap.get("email"), page - 1, size)
+        );
     }
 }
