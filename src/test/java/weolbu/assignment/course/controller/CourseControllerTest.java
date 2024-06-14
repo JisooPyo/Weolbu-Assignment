@@ -76,7 +76,7 @@ class CourseControllerTest {
         given(courseService.applyCourse(requestDto)).willReturn(apiResponseDto);
 
         // when
-        mockMvc.perform(post("/api/courses/application")
+        mockMvc.perform(post("/api/courses/applications")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated());
