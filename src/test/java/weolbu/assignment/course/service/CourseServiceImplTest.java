@@ -261,4 +261,41 @@ class CourseServiceImplTest {
         verify(courseRepository, times(1)).findAllByOrderByCreatedAtDesc(any());
         verify(memberCourseRepository, times(courses.size())).countByCourseId(anyInt());
     }
+
+    // 실패 케이스는 강의 목록 조회 API와 동일
+    @Test
+    @DisplayName("신청한 강의 목록 조회 - 성공")
+    void getAppliedCoursesSuccess() {
+        // given
+        Member foundMember = Member.builder().id(1).build();
+        given(memberService.findMemberByEmail(anyString())).willReturn(foundMember);
+
+        List<MemberCourse> memberCourses = new ArrayList<>();
+        Member teacher = Member.builder().name("강사1").build();
+        for (int i = 0; i < 5; i++) {
+            memberCourses.add(
+                MemberCourse.builder()
+                    .member(foundMember)
+                    .course(Course.builder().member(teacher).id(i + 1).build())
+                    .build()
+            );
+        }
+        int pageNumber = 0;
+        int pageSize = 20;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<MemberCourse> memberCoursesPage = new PageImpl<>(memberCourses, pageable, memberCourses.size());
+
+        given(memberCourseRepository.findAllByMemberIdOrderByIdDesc(anyInt(), any()))
+            .willReturn(memberCoursesPage);
+        given(memberCourseRepository.countByCourseId(anyInt())).willReturn(5);
+
+        // when
+        CoursesResponseDto responseDto = courseService.getAppliedCourses("email", pageNumber, pageSize);
+
+        // then
+        assertEquals(memberCourses.size(), responseDto.getCourseResponseDtos().size());
+        assertEquals(pageSize, responseDto.getSize());
+        assertEquals(memberCourses.size(), responseDto.getTotalElements());
+        verify(memberCourseRepository, times(memberCourses.size())).countByCourseId(anyInt());
+    }
 }
