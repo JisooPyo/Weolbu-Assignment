@@ -105,7 +105,13 @@ public class CourseServiceImpl implements CourseService {
         ApplyCourseResponseDto responseDto = toApplyCourseResponseDto(successList, failureList);
 
         // 강의 신청 성공 메시지와 강의 신청 정보를 반환합니다.
-        return new ApiResponseDto(CourseConstants.APPLY_COURSE_SUCCESS, responseDto);
+        if (failureList.size() == requestDto.getCourses().size()) {
+            return new ApiResponseDto(CourseConstants.APPLY_COURSE_FAILURE, responseDto);
+        } else if (!failureList.isEmpty()) {
+            return new ApiResponseDto(CourseConstants.APPLY_COURSE_PARTIAL_SUCCESS, responseDto);
+        } else {
+            return new ApiResponseDto(CourseConstants.APPLY_COURSE_SUCCESS, responseDto);
+        }
     }
 
     @Override

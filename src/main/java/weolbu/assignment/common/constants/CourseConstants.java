@@ -9,4 +9,6 @@ public class CourseConstants {
     public static final String ALREADY_APPLIED = "이미 신청한 강의입니다.";
     public static final String APPLY_COURSE_SUCCESS = "강의 신청이 완료되었습니다.";
     public static final String COURSE_FULL = "최대 수강 인원에 도달하여 신청하지 못했습니다.";
+    public static final String APPLY_COURSE_FAILURE = "강의 신청에 실패하였습니다.";
+    public static final String APPLY_COURSE_PARTIAL_SUCCESS = "일부 강의 신청이 완료되었습니다.";
 }
