@@ -13,7 +13,7 @@ import jakarta.persistence.LockModeType;
 import weolbu.assignment.course.entity.Course;
 
 @Repository
-public interface CourseRepository extends JpaRepository<Course, Integer>, CourseRepositoryCustom {
+public interface CourseRepository extends JpaRepository<Course, Integer> {
     Optional<Course> findByName(String name);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
